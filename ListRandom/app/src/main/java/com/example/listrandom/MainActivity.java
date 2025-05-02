@@ -2,6 +2,7 @@ package com.example.listrandom;
 
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -16,9 +17,12 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
     private ImageButton add_btn;
     private ImageButton delete_btn;  // new delete button
+
+    private ImageButton edit_btn;
     private EditText itemEdt;
     private ArrayList<String> lngList;
     private ListView listvew;
+    private int itemIndex = -1;
 
     //String[] homework = {
     //        "Algorithms",
@@ -44,12 +48,19 @@ public class MainActivity extends AppCompatActivity {
         listvew = findViewById(R.id.listvew);
         add_btn = findViewById(R.id.btn_add);
         delete_btn = findViewById(R.id.btn_delete);  // make sure this id exists in your layout
+        edit_btn = findViewById(R.id.btn_edit);
+
         itemEdt = findViewById(R.id.idEdtItemName);
 
         // Initialize the ArrayList and adapter
         lngList = new ArrayList<>();
         adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, lngList);
         listvew.setAdapter(adapter);
+
+        // save index of highlighted item
+        listvew.setOnItemClickListener((parent, view, position, id) -> {
+            itemIndex = position;
+        });
 
         // Add button onClick: adds the item from the text entry
         add_btn.setOnClickListener(new View.OnClickListener() {
@@ -79,6 +90,22 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        // Edit button onClick: select item to highlight then pencil to edit it
+        edit_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String newItem4Edit = itemEdt.getText().toString().trim();
+                if (!newItem4Edit.isEmpty() && itemIndex != -1) {
+                    lngList.set(itemIndex, newItem4Edit);
+                    adapter.notifyDataSetChanged();
+                    // Optionally clear the text for new entries
+                    itemEdt.setText("");
+                }
+            }
+        });
+
+
 
         // Optional: Set window insets for EdgeToEdge
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
