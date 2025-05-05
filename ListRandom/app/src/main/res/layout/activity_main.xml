@@ -8,81 +8,85 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-
-    <EditText
-        android:id="@+id/idEdtItemName"
-        android:layout_width="270dp"
-        android:layout_height="74dp"
-        android:layout_margin="4dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginEnd="137dp"
-        android:layout_marginBottom="3dp"
-        android:hint="@string/enter_item_name_to_add_or_remove_in_list"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_nav_container"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/listvew" />
-    <!-- Bottom navigation container holding the buttons -->
+    <!-- Navigation container which now arranges children vertically -->
     <LinearLayout
-        android:id="@+id/bottom_nav_container"
+        android:id="@+id/top_nav_container"
         android:layout_width="0dp"
-        android:layout_height="100dp"
-        android:orientation="horizontal"
-        android:padding="16dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- Delete button -->
-        <ImageButton
-            android:id="@+id/btn_delete"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+        <!-- EditText on top -->
+        <EditText
+            android:id="@+id/idEdtItemName"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
             android:layout_margin="4dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_minus"
-            android:contentDescription="@string/delete"
-            android:background="@drawable/button_background" />
+            android:hint="@string/enter_item_name_to_add_or_remove_in_list" />
 
-        <!-- Edit button -->
-        <ImageButton
-            android:id="@+id/btn_edit"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:background="@drawable/button_background"
-            android:contentDescription="@string/edit"
-            android:layout_margin="4dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_pencil" />
+        <!-- Button container below the EditText -->
+        <LinearLayout
+            android:id="@+id/bottom_nav_container"
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:orientation="horizontal"
+            android:padding="16dp">
 
-        <!-- Randomize button -->
-        <ImageButton
-            android:id="@+id/btn_randomize"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="4dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_randomize"
-            android:contentDescription="@string/randomize"
-            android:background="@drawable/button_background" />
+            <!-- Delete button -->
+            <ImageButton
+                android:id="@+id/btn_delete"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_margin="4dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_minus"
+                android:contentDescription="@string/delete"
+                android:background="@drawable/button_background" />
 
-        <!-- Add button -->
-        <ImageButton
-            android:id="@+id/btn_add"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_margin="4dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_plus"
-            android:contentDescription="@string/add"
-            android:background="@drawable/button_background" />
+            <!-- Edit button -->
+            <ImageButton
+                android:id="@+id/btn_edit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_margin="4dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_pencil"
+                android:contentDescription="@string/edit"
+                android:background="@drawable/button_background" />
 
+            <!-- Randomize button -->
+            <ImageButton
+                android:id="@+id/btn_randomize"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_margin="4dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_randomize"
+                android:contentDescription="@string/randomize"
+                android:background="@drawable/button_background" />
+
+            <!-- Add button -->
+            <ImageButton
+                android:id="@+id/btn_add"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_margin="4dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_plus"
+                android:contentDescription="@string/add"
+                android:background="@drawable/button_background" />
+
+        </LinearLayout>
     </LinearLayout>
-    <!-- List -->
+
+    <!-- List that displays below the top_nav_container -->
     <ListView
         android:id="@+id/listvew"
         android:layout_width="0dp"
@@ -92,7 +96,7 @@
         android:divider="#DD0088FF"
         android:dividerHeight="1dp"
         android:listSelector="#BEFFC800"
-        app:layout_constraintBottom_toTopOf="@+id/bottom_nav_container"
+        app:layout_constraintBottom_toTopOf="@+id/top_nav_container"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
