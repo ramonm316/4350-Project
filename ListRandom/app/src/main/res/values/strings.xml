@@ -11,5 +11,5 @@
     <string name="due_date_mm_dd_yyyy">Due Date (MM/DD/YYYY)</string>
     <string name="cancel">Cancel</string>
     <string name="submit">Submit</string>
-    <string name="enter_item_name_to_add_or_remove_in_list">Enter item name to add or remove in List:</string>
+    <string name="enter_item_name_to_add_or_remove_in_list">Enter item name then press button (Edit needs selected item):</string>
 </resources>
