@@ -10,7 +10,12 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.SeekBar;
+import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -23,12 +28,14 @@ public class MainActivity extends AppCompatActivity {
     private ImageButton delete_btn;
     private ImageButton edit_btn;
     private EditText itemEdt;
-    private ArrayList<String> lngList;
+    private ArrayList<Item> lngList;
     private ListView listvew;
     private int itemIndex = -1;
-    ArrayAdapter<String> adapter;
+
+    ItemAdapter adapter;
 
     private final String DELIMITER=";;";
+    private final String ITEM_SEPERATOR = "::";
 
 
     @Override
@@ -53,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize the list and adapter
         lngList = new ArrayList<>();
-        adapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, lngList);
+        adapter = new ItemAdapter(this, lngList);
         listvew.setAdapter(adapter);
 
         loadList();
@@ -67,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String item = itemEdt.getText().toString().trim();
                 if (!item.isEmpty()) {
-                    lngList.add(item);
+                    lngList.add(new Item(item,0));
                     adapter.notifyDataSetChanged();
                     itemEdt.setText("");
                     saveList();
@@ -81,8 +88,29 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 String itemToDelete = itemEdt.getText().toString().trim();
-                if (!itemToDelete.isEmpty() && lngList.contains(itemToDelete)) {
-                    lngList.remove(itemToDelete);
+                if (!itemToDelete.isEmpty()) {
+                    for (int i = 0; i < lngList.size(); i++) {
+                        if (lngList.get(i).getName().equalsIgnoreCase(itemToDelete)) {
+                            lngList.remove(i);
+                            adapter.notifyDataSetChanged();
+                            itemEdt.setText("");
+                            saveList();
+                            hideKeyboard();
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+
+
+        // Edit button: replace selected item with new text then hide keyboard
+        edit_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String newItemText = itemEdt.getText().toString().trim();
+                if (!newItemText.isEmpty() && itemIndex != -1) {
+                    lngList.set(itemIndex, new Item(newItemText, lngList.get(itemIndex).getProgress()));
                     adapter.notifyDataSetChanged();
                     itemEdt.setText("");
                     saveList();
@@ -91,19 +119,54 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Edit button: replace selected item with new text then hide keyboard
-        edit_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String newItemText = itemEdt.getText().toString().trim();
-                if (!newItemText.isEmpty() && itemIndex != -1) {
-                    lngList.set(itemIndex, newItemText);
-                    adapter.notifyDataSetChanged();
-                    itemEdt.setText("");
-                    saveList();
-                    hideKeyboard();
+        listvew.setOnItemClickListener((parent, view, position, id) -> {
+            // index of clicked item
+            itemIndex = position;
+            Item item = lngList.get(position);
+
+            // display alert to adjust the progress
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setTitle("Set Progress for: " + item.getName());
+
+            LinearLayout layout = new LinearLayout(MainActivity.this);
+            layout.setOrientation(LinearLayout.VERTICAL);
+            layout.setPadding(32,32,32,32);
+
+            // display current progress
+            final TextView progressLabel = new TextView(MainActivity.this);
+            progressLabel.setText("Progress: " + item.getProgress() + "%");
+
+            layout.addView(progressLabel);
+
+            // seekbar to allow user to set the progress
+            final SeekBar seekBar = new SeekBar(MainActivity.this);
+            seekBar.setMax(100);
+            seekBar.setProgress(item.getProgress());
+            layout.addView(seekBar);
+
+            seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    progressLabel.setText("Progress: " + progress + "%");
                 }
-            }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {}
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {}
+            });
+
+            builder.setView(layout);
+            builder.setPositiveButton("Save", (dialog, which) -> {
+                // update the progress on save
+                item.setProgress(seekBar.getProgress());
+                adapter.notifyDataSetChanged();
+                // save progress
+                saveList();
+            });
+            builder.setNegativeButton("Cancel", null);
+            builder.show();
         });
     }
 
@@ -114,8 +177,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Build a single string from all items
         StringBuilder sb = new StringBuilder();
-        for (String item : lngList) {
-            sb.append(item).append(DELIMITER);
+        for (Item item : lngList) {
+            sb.append(item.getName()).append(ITEM_SEPERATOR).append(item.getProgress()).append(DELIMITER);
+
         }
         editor.putString("listData", sb.toString());
         editor.apply();
@@ -127,9 +191,12 @@ public class MainActivity extends AppCompatActivity {
         String savedData = prefs.getString("listData", "");
         if (!savedData.isEmpty()) {
             String[] items = savedData.split(DELIMITER);
-            for (String item : items) {
-                if (!item.isEmpty()) {
-                    lngList.add(item);
+            for (String entry : items) {
+                if (!entry.isEmpty() && entry.contains(ITEM_SEPERATOR)) {
+                    String[] parts = entry.split(ITEM_SEPERATOR);
+                    String name = parts[0];
+                    int progress = Integer.parseInt(parts[1]);
+                    lngList.add(new Item(name, progress));
                 }
             }
             adapter.notifyDataSetChanged();
