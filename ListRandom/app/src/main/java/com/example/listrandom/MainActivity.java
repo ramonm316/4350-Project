@@ -1,5 +1,6 @@
 package com.example.listrandom;
 
+import com.example.listrandom.SlotMachine;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Rect;
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Item> ogList = new ArrayList<>();
     private ListView listvew;
     private int itemIndex = -1;
+    private SlotMachine slotMachine;
+    private ImageButton spin_btn;
 
 
     private boolean isRand = false;
@@ -155,6 +158,20 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+
+        // initialize the new spin button
+        spin_btn = findViewById(R.id.btn_spin); 
+        slotMachine = new SlotMachine(this, listvew, lngList, () -> {
+            spin_btn.setEnabled(true); // re-enable after spin ends
+        });
+
+        spin_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                spin_btn.setEnabled(false);
+                slotMachine.startSpin();
+            }
+          });
 
         listvew.setOnItemClickListener((parent, view, position, id) -> {
             // index of clicked item
