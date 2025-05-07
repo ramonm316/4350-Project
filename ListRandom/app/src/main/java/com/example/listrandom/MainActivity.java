@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -22,16 +23,25 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import androidx.transition.TransitionManager;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class MainActivity extends AppCompatActivity {
     private ImageButton add_btn;
     private ImageButton delete_btn;
     private ImageButton edit_btn;
+    private ImageButton random_btn;
     private EditText itemEdt;
     private ArrayList<Item> lngList;
+    private ArrayList<Item> ogList = new ArrayList<>();
     private ListView listvew;
     private int itemIndex = -1;
 
+
+    private boolean isRand = false;
+    private final String PREFS_NAME = "ListPrefs";
+    private final String LIST_KEY = "listData";
+    private final String RANDOMIZED_KEY = "isRand";
+    private final String OG_LIST_KEY = "ogListData";
     ItemAdapter adapter;
 
     private final String DELIMITER=";;";
@@ -49,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
         add_btn = findViewById(R.id.btn_add);
         delete_btn = findViewById(R.id.btn_delete);
         edit_btn = findViewById(R.id.btn_edit);
+        random_btn = findViewById(R.id.btn_randomize);
         itemEdt = findViewById(R.id.idEdtItemName);
 
         // Setup insets if needed (this should not conflict with adjustResize if well tweaked)
@@ -116,6 +127,32 @@ public class MainActivity extends AppCompatActivity {
                     saveList();
                     hideKeyboard();
                 }
+            }
+        });
+
+        //Randomize the list
+        random_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!isRand){
+                    ogList.clear();
+                    ogList.addAll(lngList);
+                    Collections.shuffle(lngList);
+                    adapter.notifyDataSetChanged();
+                    isRand = true;
+
+                    random_btn.setImageResource(R.drawable.baseline_undo_24);
+                    Toast.makeText(MainActivity.this, "List Randomized!", Toast.LENGTH_SHORT).show();
+                } else {
+                    lngList.clear();
+                    lngList.addAll(ogList);
+                    adapter.notifyDataSetChanged();
+                    isRand = false;
+
+                    random_btn.setImageResource(R.drawable.ic_randomize);
+                    Toast.makeText(MainActivity.this, "Original Order Restored!", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
 
@@ -189,6 +226,9 @@ public class MainActivity extends AppCompatActivity {
     private void loadList() {
         SharedPreferences prefs = getSharedPreferences("ListPrefs", MODE_PRIVATE);
         String savedData = prefs.getString("listData", "");
+        isRand = prefs.getBoolean(RANDOMIZED_KEY, false);
+
+        lngList.clear();
         if (!savedData.isEmpty()) {
             String[] items = savedData.split(DELIMITER);
             for (String entry : items) {
@@ -201,7 +241,28 @@ public class MainActivity extends AppCompatActivity {
             }
             adapter.notifyDataSetChanged();
         }
+        ogList.clear();
+        if (isRand) {
+            String ogData = prefs.getString(OG_LIST_KEY, "");
+            if (!ogData.isEmpty()) {
+                String[] items = ogData.split(DELIMITER);
+                for (String entry : items) {
+                    if (!entry.isEmpty() && entry.contains(ITEM_SEPERATOR)) {
+                        String[] parts = entry.split(ITEM_SEPERATOR);
+                        String name = parts[0];
+                        int progress = Integer.parseInt(parts[1]);
+                        ogList.add(new Item(name, progress));
+                    }
+                }
+            }
+            random_btn.setImageResource(R.drawable.baseline_undo_24);
+        }else{
+            ogList.addAll(lngList);
+            random_btn.setImageResource(R.drawable.ic_randomize);
+        }
+        adapter.notifyDataSetChanged();
     }
+
 
     // Helper method to hide the soft keyboard.
     private void hideKeyboard() {
@@ -213,6 +274,8 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
+
+
 
     @Override
     protected void onPause() {
