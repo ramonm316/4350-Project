@@ -12,6 +12,7 @@
     <string name="cancel">Cancel</string>
     <string name="submit">Submit</string>
     <string name="enter_item_name_to_add_or_remove_in_list">Enter item name then press button (Edit needs selected item):</string>
+    <string name="spin">Spin</string>
     <string name="slide_image_description">Slide Image</string>
     <string name="next">Next</string>
     <string name="skip">Skip</string>
