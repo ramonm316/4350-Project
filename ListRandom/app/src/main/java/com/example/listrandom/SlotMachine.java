@@ -1,6 +1,5 @@
 package com.example.listrandom;
 
-import androidx.core.content.ContextCompat;
 import android.content.Context;
 import android.os.Handler;
 import android.view.View;
@@ -64,9 +63,9 @@ public class SlotMachine {
         for (int i = 0; i < listView.getChildCount(); i++) {
             View itemView = listView.getChildAt(i);
             if (i == selectedIndex - listView.getFirstVisiblePosition()) {
-                itemView.setBackgroundColor(ContextCompat.getColor(context, R.color.list_item_highlight));
+                itemView.setBackgroundColor(context.getResources().getColor(android.R.color.holo_green_light));
             } else {
-                itemView.setBackgroundColor(ContextCompat.getColor(context, android.R.color.transparent));
+                itemView.setBackgroundColor(context.getResources().getColor(android.R.color.transparent));
             }
         }
     }
