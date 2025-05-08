@@ -12,4 +12,14 @@
     <string name="cancel">Cancel</string>
     <string name="submit">Submit</string>
     <string name="enter_item_name_to_add_or_remove_in_list">Enter item name then press button (Edit needs selected item):</string>
+    <string name="slide_image_description">Slide Image</string>
+    <string name="next">Next</string>
+    <string name="skip">Skip</string>
+    <string name="done">Done</string>
+    <string name="slide_1_title">Welcome to ListRandom!</string>
+    <string name="slide_1_desc">Easily manage and randomize your lists. Perfect for tasks, choices, and more!</string>
+    <string name="slide_2_title">Key Features</string>
+    <string name="slide_2_desc">Add, edit, delete items. Randomize your list with a tap. Spin to pick an item!</string>
+    <string name="slide_3_title">Get Started</string>
+    <string name="slide_3_desc">Let\'s organize and have some fun. Your lists, your rules, with a bit of randomness!</string>
 </resources>
