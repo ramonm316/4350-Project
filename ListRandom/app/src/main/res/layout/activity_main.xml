@@ -96,18 +96,6 @@
                 android:scaleType="fitCenter"
                 android:src="@drawable/ic_randomize" />
 
-            <!-- Spin button -->
-            <ImageButton
-                android:id="@+id/btn_spin"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_margin="4dp"
-                android:scaleType="fitCenter"
-                android:src="@drawable/ic_spin"
-                android:contentDescription="@string/spin"
-                android:background="@drawable/button_background" />
-
             <!-- Add button -->
             <ImageButton
                 android:id="@+id/btn_add"
